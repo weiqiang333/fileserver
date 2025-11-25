@@ -1,7 +1,7 @@
-# author: weiqiang; date: 2022-12
+# author: weiqiang; date: 2025-11
 FROM centos7.6:latest
 
-COPY build/go-default-service /opt/go-default-service
+COPY build/fileserver /opt/fileserver
 RUN mkdir -p /opt/web/ /opt/configs/
 COPY build/dockerfile /opt/
 COPY configs /opt/configs
@@ -9,4 +9,4 @@ COPY web/static /opt/web/static
 COPY web/templates /opt/web/templates
 WORKDIR /opt/
 EXPOSE 8080
-ENTRYPOINT ["./go-default-service"]
+ENTRYPOINT ["./fileserver"]

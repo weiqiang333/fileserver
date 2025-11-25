@@ -7,7 +7,7 @@ metadata:
 spec:
   defaultBackend:
     service:
-      name: go-default-service
+      name: fileserver
       port:
         number: 8080
 
@@ -18,7 +18,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-  name: go-default-service
+  name: fileserver
   namespace: go
 spec:
   rules:
@@ -29,7 +29,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: go-default-service
+                name: fileserver
                 port:
                   number: 8080
 
@@ -39,9 +39,9 @@ kind: Service
 metadata:
   annotations:
   labels:
-    app.kubernetes.io/name: go-default-service
-    app.kubernetes.io/instance: go-default-service
-  name: go-default-service
+    app.kubernetes.io/name: fileserver
+    app.kubernetes.io/instance: fileserver
+  name: fileserver
   namespace: go
 spec:
   ipFamilies:
@@ -53,33 +53,33 @@ spec:
       targetPort: http
       appProtocol: http
   selector:
-    app.kubernetes.io/name: go-default-service
-    app.kubernetes.io/instance: go-default-service
+    app.kubernetes.io/name: fileserver
+    app.kubernetes.io/instance: fileserver
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/name: go-default-service
-    app.kubernetes.io/instance: go-default-service
-  name: go-default-service
+    app.kubernetes.io/name: fileserver
+    app.kubernetes.io/instance: fileserver
+  name: fileserver
   namespace: go
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: go-default-service
-      app.kubernetes.io/instance: go-default-service
+      app.kubernetes.io/name: fileserver
+      app.kubernetes.io/instance: fileserver
   replicas: 2
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: go-default-service
-        app.kubernetes.io/instance: go-default-service
+        app.kubernetes.io/name: fileserver
+        app.kubernetes.io/instance: fileserver
     spec:
       containers:
-        - name: go-default-service
-          image: harbor.go.xxx.tech/devops/go-default-service:v0.1
+        - name: fileserver
+          image: harbor.go.xxx.tech/devops/fileserver:v0.1
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 5
@@ -120,7 +120,7 @@ spec:
       volumes:
         - name: config-yaml
           configMap:
-            name: go-default-service-configmap
+            name: fileserver-configmap
 
 ---
 apiVersion: v1

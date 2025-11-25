@@ -7,7 +7,7 @@ set -e
 #registrieAddress="harbor.xxx.com/devops"
 version=$1
 if [ -z $version ]; then
-    version=v0.2
+    version=v1.0
 fi
 
 imageTagVersion=${version}

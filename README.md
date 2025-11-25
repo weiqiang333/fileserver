@@ -31,22 +31,22 @@
 - build package
 ```
 # 执行 go build, 并制作 images
-bash cmd/linux_build.sh v0.2
+bash cmd/linux_build.sh v1.0
 ```
 
 - deploy
 ```
 kubectl create namespace go
-kubectl -n go create configmap go-default-service-configmap --from-file=configs/config.yaml
-kubectl apply -f build/go_default_service-deploy.yaml
+kubectl -n go create configmap fileserver-configmap --from-file=configs/config.yaml
+kubectl apply -f build/fileserver-deploy.yaml
 ```
 
 - deploy 本地部署
 ```sh
-    version=v0.8
+    version=v1.0
     TIME=$(echo -n $(date +%Y-%m-%d-%H-%M))
     server_manager_ip="8.8.8.8"
-    project_name="default-project"
+    project_name="fileserver"
     scp -P 49999 ${project_name}-linux-amd64-$version.tar.gz root@${server_manager_ip}:
     ssh -p 49999 root@${server_manager_ip} "
         rm -rf /data/service/${project_name}_data/${TIME}
