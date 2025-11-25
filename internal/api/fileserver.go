@@ -73,10 +73,10 @@ func FileServerRoute(r *gin.RouterGroup) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "文件服务器已启动",
 			"apis": map[string]string{
-				"上传文件": "POST /api/upload",
-				"文件列表": "GET /api/files",
-				"下载文件": "GET /api/download/:filename",
-				"删除文件": "DELETE /api/file/:filename",
+				"上传文件": "POST /api/v1/file/upload",
+				"文件列表": "GET /api/v1/file/files",
+				"下载文件": "GET /api/v1/file/download/:filename",
+				"删除文件": "DELETE /api/v1/file/file/:filename",
 				"直接下载": "GET /files/:filename",
 			},
 		})
@@ -160,7 +160,7 @@ func uploadFile(c *gin.Context, UploadDir string) {
 		FileName:    filename,
 		FileSize:    header.Size,
 		UploadTime:  time.Now(),
-		DownloadURL: fmt.Sprintf("/api/download/%s", filename),
+		DownloadURL: fmt.Sprintf("/api/v1/file/download/%s", filename),
 	}
 
 	c.JSON(http.StatusOK, gin.H{

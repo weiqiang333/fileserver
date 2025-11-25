@@ -15,6 +15,7 @@ auth:
   basic:
     admin: admin333
     weiqiang: weiqiang
+    tempopen: DArMmkYzvz85XNKGIeZ85
 
 fileserver:
   path: ./uploads

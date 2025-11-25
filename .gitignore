@@ -18,3 +18,5 @@ vendor/
 *.tar.gz
 *.log
 build/fileserver
+fileserver
+
