@@ -15,3 +15,6 @@ auth:
   basic:
     admin: admin333
     weiqiang: weiqiang
+
+fileserver:
+  path: ./uploads

@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 const (
-	UploadDir   = "./uploads"
 	MaxFileSize = 100 << 20 // 100MB
 )
 
@@ -25,8 +25,10 @@ type FileInfo struct {
 	DownloadURL string    `json:"download_url"`
 }
 
-// FileServerRoute Url /
+// FileServerRoute /api/v1/file/ 文件下载及上传管理路由
 func FileServerRoute(r *gin.RouterGroup) {
+
+	UploadDir := viper.GetString("fileserver.path")
 
 	// 确保上传目录存在
 	if err := os.MkdirAll(UploadDir, 0755); err != nil {
@@ -47,16 +49,24 @@ func FileServerRoute(r *gin.RouterGroup) {
 	r.Static("/files", UploadDir)
 
 	// 上传文件
-	r.POST("/upload", uploadFile)
+	r.POST("/upload", func(c *gin.Context) {
+		uploadFile(c, UploadDir)
+	})
 
 	// 获取文件列表
-	r.GET("/files", listFiles)
+	r.GET("/files", func(c *gin.Context) {
+		listFiles(c, UploadDir)
+	})
 
 	// 下载文件
-	r.GET("/download/:filename", downloadFile)
+	r.GET("/download/:filename", func(c *gin.Context) {
+		downloadFile(c, UploadDir)
+	})
 
 	// 删除文件
-	r.DELETE("/file/:filename", deleteFile)
+	r.DELETE("/file/:filename", func(c *gin.Context) {
+		deleteFile(c, UploadDir)
+	})
 
 	// 首页
 	r.GET("/", func(c *gin.Context) {
@@ -90,7 +100,7 @@ func corsMiddleware() gin.HandlerFunc {
 }
 
 // 上传文件处理函数
-func uploadFile(c *gin.Context) {
+func uploadFile(c *gin.Context, UploadDir string) {
 	// 限制请求体大小
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MaxFileSize)
 
@@ -161,7 +171,7 @@ func uploadFile(c *gin.Context) {
 }
 
 // 获取文件列表
-func listFiles(c *gin.Context) {
+func listFiles(c *gin.Context, UploadDir string) {
 	entries, err := os.ReadDir(UploadDir)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -183,7 +193,7 @@ func listFiles(c *gin.Context) {
 				FileName:    entry.Name(),
 				FileSize:    info.Size(),
 				UploadTime:  info.ModTime(),
-				DownloadURL: fmt.Sprintf("/api/download/%s", entry.Name()),
+				DownloadURL: fmt.Sprintf("/api/v1/file/download/%s", entry.Name()),
 			})
 		}
 	}
@@ -195,7 +205,7 @@ func listFiles(c *gin.Context) {
 }
 
 // 下载文件处理函数
-func downloadFile(c *gin.Context) {
+func downloadFile(c *gin.Context, UploadDir string) {
 	filename := c.Param("filename")
 
 	// 检查文件名安全性
@@ -229,7 +239,7 @@ func downloadFile(c *gin.Context) {
 }
 
 // 删除文件
-func deleteFile(c *gin.Context) {
+func deleteFile(c *gin.Context, UploadDir string) {
 	filename := c.Param("filename")
 
 	// 检查文件名安全性
